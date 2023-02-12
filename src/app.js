@@ -2,7 +2,7 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 const webhooks = require("./webhooks.js");
 
-async function run(): Promise<void> {
+async function run() {
   let webhookUrl = core.getInput("webhook_url");
   const status = core.getInput("status");
   const hideLinks = core.getInput("hide_links");
