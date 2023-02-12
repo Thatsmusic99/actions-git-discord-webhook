@@ -28,7 +28,11 @@ module.exports.send = (
 
   let latest = commits[0];
 
+  // the avatar of the GitHub Actions user
+  const imageUrl = "https://avatars.githubusercontent.com/u/44036562";
+
   let embed = new discord.MessageEmbed()
+    .setImage(imageUrl)
     .setColor(color)
     .setTitle(payload.repository.full_name)
     .setDescription(
