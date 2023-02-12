@@ -5,7 +5,7 @@ inputs:
   webhook_url:
     description: Discord webhook URL
   status:
-    description: Set it to ${{ job.status }}
+    description: Set it to job.status
   censor_username:
     description: Hide the full GitHub username
     default: false
