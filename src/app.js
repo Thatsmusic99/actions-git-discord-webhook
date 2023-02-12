@@ -1,46 +1,45 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
-const process = require("process");
 const webhooks = require("./webhooks.js");
 
-async function main() {
+async function run(): Promise<void> {
   let webhookUrl = core.getInput("webhook_url");
+  const status = core.getInput("status");
   const hideLinks = core.getInput("hide_links");
-  const color = core.getInput("color");
-  const id = core.getInput("id");
-  const token = core.getInput("token");
-  const customRepoName = core.getInput("repo_name");
   const censorUsername = core.getInput("censor_username");
 
   let payload = github.context.payload;
+  let runNumber = github.context.runNumber;
+  let runUrl = `${payload.repository.html_url}/actions/runs/${github.context.runId}`;
 
-  if (customRepoName !== "") {
-    payload.repository.full_name = customRepoName;
-  }
-
-  if (!webhookUrl) {
-    core.warning("Missing webhook URL, using id and token fields to generate a webhook URL")
-
-    if (!id || !token) {
-      core.setFailed("Webhook URL cannot be generated, please add `id` and `token` or `webhook_url` to the GitHub action")
-      process.exit(1)
-    }
-
-    webhookUrl = `https://discord.com/api/webhooks/${id}/${token}`
-  }
+  let color = statusColor(status);
 
   await webhooks.send(
-    webhookUrl,
     payload,
+    runNumber,
+    runUrl,
+    webhookUrl,
+    status,
     hideLinks,
     censorUsername,
     color
   );
 }
 
-main()
-  .then(() => process.exit(0))
+function statusColor(status) {
+  switch (status) {
+    case "success":
+      return "DARK_GREEN";
+    case "failure":
+      return "DARK_RED";
+    default:
+      return "GREY";
+  }
+}
+
+run()
   .catch((error) => {
-    core.setFailed(error)
-    process.exit(1)
+    if (error instanceof Error) {
+      core.setFailed(error.message);
+    }
   });

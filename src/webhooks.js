@@ -3,17 +3,19 @@ const core = require("@actions/core");
 const MAX_MESSAGE_LENGTH = 128;
 
 module.exports.send = (
-  webhookUrl,
   payload,
+  runNumber,
+  runUrl,
+  webhookUrl,
+  status,
   hideLinks,
   censorUsername,
   color
 ) => {
-  const repository = payload.repository.full_name;
   const commits = payload.commits;
-  const size = commits.length;
   const branch = payload.ref.split("/")[payload.ref.split("/").length - 1];
-  const url = payload.compare;
+  const repoUrl = payload.repository.html_url;
+  const compareUrl = payload.compare;
 
   if (commits.length === 0) {
     core.warning(`Aborting analysis, found no commits.`);
@@ -21,20 +23,25 @@ module.exports.send = (
   }
 
   core.debug(`Received payload: ${JSON.stringify(payload, null, 2)}`);
-  core.debug(`Received ${commits.length}/${size} commits...`);
+  core.debug(`Received ${commits.length} commits...`);
   core.info("Constructing Embed...");
 
   let latest = commits[0];
-  const count = size == 1 ? "Commit" : " Commits";
 
   let embed = new discord.MessageEmbed()
     .setColor(color)
-    .setTitle(`⚡ ${size} ${count}\n📁\`${repository}\`\n🌳 \`${branch}\``)
-    .setDescription(this.getChangeLog(payload, hideLinks, censorUsername))
+    .setTitle(payload.repository.full_name)
+    .setDescription(
+      `**Branch:** [${branch}](${repoUrl}/tree/${branch})` +
+      `**Run:** [${runNumber}](${runUrl})` +
+      `**Status:** ${status.toLowerCase()}` +
+      `**[Changes](${compareUrl}):**` +
+      getChangeLog(payload, hideLinks, censorUsername)
+    )
     .setTimestamp(Date.parse(latest.timestamp));
 
   if (!hideLinks) {
-    embed.setURL(url);
+    embed.setURL(repoUrl);
   }
 
   return new Promise((resolve, reject) => {
@@ -51,7 +58,7 @@ module.exports.send = (
 
     return client
       .send({
-        embeds: [embed],
+        embeds: [embed]
       })
       .then((result) => {
         core.info("Successfully sent the message!");
@@ -61,24 +68,24 @@ module.exports.send = (
   });
 };
 
-module.exports.getChangeLog = (payload, hideLinks, censorUsername) => {
+function getChangeLog(payload, hideLinks, censorUsername) {
   core.info("Constructing Changelog...");
   const commits = payload.commits;
+
+  if (commits.length === 0) {
+    return "_No changes._";
+  }
+
   let changelog = "";
 
   for (let i in commits) {
-    if (i > 3) {
+    if (i > 5) {
       changelog += `+ ${commits.length - i} more...\n`;
       break;
     }
 
     let commit = commits[i];
-    const firstUsername = commit.author.username[0];
-    const lastUsername =
-      commit.author.username[commit.author.username.length - 1];
-    const username = !!censorUsername
-      ? `${firstUsername}...${lastUsername}`
-      : commit.author.username;
+    const username = censorUsernameIfNeeded(commit, censorUsername);
     const repository = payload.repository;
 
     if (commit.message.includes(repository.full_name) && hideLinks) {
@@ -99,4 +106,13 @@ module.exports.getChangeLog = (payload, hideLinks, censorUsername) => {
   }
 
   return changelog;
-};
+}
+
+function censorUsernameIfNeeded(commit, censorUsername) {
+  const username = commit.author.username;
+  if (!censorUsername) return username;
+
+  const firstUsernameChar = username[0];
+  const lastUsernameChar = username[username.length - 1];
+  return `${firstUsernameChar}...${lastUsernameChar}`;
+}
