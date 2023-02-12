@@ -13,7 +13,7 @@ module.exports.send = (
   color
 ) => {
   const commits = payload.commits;
-  const branch = payload.ref.split("/")[payload.ref.split("/").length - 1];
+  const branch = payload.ref_name;
   const repoUrl = payload.repository.html_url;
   const compareUrl = payload.compare;
 
@@ -32,17 +32,19 @@ module.exports.send = (
   const imageUrl = "https://avatars.githubusercontent.com/u/44036562";
 
   let embed = new discord.MessageEmbed()
-    .setImage(imageUrl)
+    .setAuthor("GitHub Actions", imageUrl)
     .setColor(color)
     .setTitle(payload.repository.full_name)
     .setDescription(
-      `**Branch:** [${branch}](${repoUrl}/tree/${branch})` +
-      `**Run:** [${runNumber}](${runUrl})` +
-      `**Status:** ${status.toLowerCase()}` +
-      `**[Changes](${compareUrl}):**` +
+      `**Branch:** [${branch}](${repoUrl}/tree/${branch})\n` +
+      `**Run:** [${runNumber}](${runUrl})\n` +
+      `**Status:** ${status.toLowerCase()}\n` +
+      `**[Changes](${compareUrl}):**\n` +
       getChangeLog(payload, hideLinks, censorUsername)
     )
     .setTimestamp(Date.parse(latest.timestamp));
+
+
 
   if (!hideLinks) {
     embed.setURL(repoUrl);
