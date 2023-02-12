@@ -4,6 +4,7 @@ const MAX_MESSAGE_LENGTH = 128;
 
 module.exports.send = (
   payload,
+  branchName,
   runNumber,
   runUrl,
   webhookUrl,
@@ -11,7 +12,6 @@ module.exports.send = (
   color
 ) => {
   const commits = payload.commits;
-  const branch = payload.ref_name;
   const repoUrl = payload.repository.html_url;
   const compareUrl = payload.compare;
 
@@ -34,7 +34,7 @@ module.exports.send = (
     .setColor(color)
     .setTitle(payload.repository.full_name)
     .setDescription(
-      `**Branch:** [${branch}](${repoUrl}/tree/${branch})\n` +
+      `**Branch:** [${branchName}](${repoUrl}/tree/${branchName})\n` +
       `**Run:** [${runNumber}](${runUrl})\n` +
       `**Status:** ${status.toLowerCase()}\n` +
       `**[Changes](${compareUrl}):**\n` +

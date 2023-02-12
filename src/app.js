@@ -10,10 +10,16 @@ async function run() {
   let runNumber = github.context.runNumber;
   let runUrl = `${payload.repository.html_url}/actions/runs/${github.context.runId}`;
 
+  if (!payload.ref.startsWith("refs/heads/")) {
+    throw Error("I only know how to notify Discord on push")
+  }
+  let branchName = payload.ref.substring("refs/heads/".length)
+
   let color = statusColor(status);
 
   await webhooks.send(
     payload,
+    branchName,
     runNumber,
     runUrl,
     webhookUrl,
