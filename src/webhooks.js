@@ -8,8 +8,6 @@ module.exports.send = (
   runUrl,
   webhookUrl,
   status,
-  hideLinks,
-  censorUsername,
   color
 ) => {
   const commits = payload.commits;
@@ -29,10 +27,10 @@ module.exports.send = (
   let latest = commits[0];
 
   // the avatar of the GitHub Actions user
-  const imageUrl = "https://avatars.githubusercontent.com/u/44036562";
+  const avatarUrl = "https://avatars.githubusercontent.com/u/44036562";
 
   let embed = new discord.MessageEmbed()
-    .setAuthor("GitHub Actions", imageUrl)
+    .setURL(repoUrl)
     .setColor(color)
     .setTitle(payload.repository.full_name)
     .setDescription(
@@ -40,15 +38,9 @@ module.exports.send = (
       `**Run:** [${runNumber}](${runUrl})\n` +
       `**Status:** ${status.toLowerCase()}\n` +
       `**[Changes](${compareUrl}):**\n` +
-      getChangeLog(payload, hideLinks, censorUsername)
+      getChangeLog(payload)
     )
     .setTimestamp(Date.parse(latest.timestamp));
-
-
-
-  if (!hideLinks) {
-    embed.setURL(repoUrl);
-  }
 
   return new Promise((resolve, reject) => {
     let client;
@@ -64,7 +56,8 @@ module.exports.send = (
 
     return client
       .send({
-        embeds: [embed]
+        avatarURL: avatarUrl,
+        embeds: [embed],
       })
       .then((result) => {
         core.info("Successfully sent the message!");
@@ -74,7 +67,7 @@ module.exports.send = (
   });
 };
 
-function getChangeLog(payload, hideLinks, censorUsername) {
+function getChangeLog(payload) {
   core.info("Constructing Changelog...");
   const commits = payload.commits;
 
@@ -91,34 +84,15 @@ function getChangeLog(payload, hideLinks, censorUsername) {
     }
 
     let commit = commits[i];
-    const username = censorUsernameIfNeeded(commit, censorUsername);
-    const repository = payload.repository;
-
-    if (commit.message.includes(repository.full_name) && hideLinks) {
-      const firstRepository = repository.full_name[0];
-      const lastRepository =
-        repository.full_name[repository.full_name.length - 1];
-      commit.message = commit.message.replaceAll(repository.full_name, `${firstRepository}...${lastRepository}`);
-    }
+    const username = commit.author.username;
 
     let sha = commit.id.substring(0, 6);
     let message =
       commit.message.length > MAX_MESSAGE_LENGTH
         ? commit.message.substring(0, MAX_MESSAGE_LENGTH) + "..."
         : commit.message;
-    changelog += !hideLinks
-      ? `[\`${sha}\`](${commit.url}) ${message} by _@${username}_\n`
-      : `\`${sha}\` ${message}  by _@${username}_\n`;
+    changelog += `[\`${sha}\`](${commit.url}) ${message} by _@${username}_\n`;
   }
 
   return changelog;
-}
-
-function censorUsernameIfNeeded(commit, censorUsername) {
-  const username = commit.author.username;
-  if (!censorUsername) return username;
-
-  const firstUsernameChar = username[0];
-  const lastUsernameChar = username[username.length - 1];
-  return `${firstUsernameChar}...${lastUsernameChar}`;
 }

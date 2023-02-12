@@ -5,8 +5,6 @@ const webhooks = require("./webhooks.js");
 async function run() {
   let webhookUrl = core.getInput("webhook_url");
   const status = core.getInput("status");
-  const hideLinks = core.getInput("hide_links");
-  const censorUsername = core.getInput("censor_username");
 
   let payload = github.context.payload;
   let runNumber = github.context.runNumber;
@@ -20,8 +18,6 @@ async function run() {
     runUrl,
     webhookUrl,
     status,
-    hideLinks,
-    censorUsername,
     color
   );
 }

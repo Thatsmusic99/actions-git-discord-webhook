@@ -17,14 +17,6 @@ This is fork of the original Discord Webhook GitHub Action, but with changes to 
 
 The GitHub job status: `${{ job.status }}`
 
-### `censor_username`
-
-Censor username with by only showing the first and last character. For example, `j...y` as `johnnyhuy`.
-
-### `hide_links`
-
-Hide links on embedded view.
-
 ## :scroll: Usage
 
 To set up this Action, create a new workflow file under `.github/workflows/workflow_name.yml`.
