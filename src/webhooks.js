@@ -39,8 +39,7 @@ module.exports.send = (
       `**Status:** ${status.toLowerCase()}\n` +
       `**[Changes](${compareUrl}):**\n` +
       getChangeLog(payload)
-    )
-    .setTimestamp(Date.parse(latest.timestamp));
+    );
 
   return new Promise((resolve, reject) => {
     let client;
@@ -91,7 +90,7 @@ function getChangeLog(payload) {
       commit.message.length > MAX_MESSAGE_LENGTH
         ? commit.message.substring(0, MAX_MESSAGE_LENGTH) + "..."
         : commit.message;
-    changelog += `[\`${sha}\`](${commit.url}) ${message} by _@${username}_\n`;
+    changelog += `- [\`${sha}\`](${commit.url}) ${message} by _@${username}_\n`;
   }
 
   return changelog;
