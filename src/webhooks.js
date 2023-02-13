@@ -1,6 +1,6 @@
 const discord = require("discord.js");
 const core = require("@actions/core");
-const MAX_MESSAGE_LENGTH = 128;
+const MAX_SUBJECT_LENGTH = 72;
 
 module.exports.send = (
   payload,
@@ -86,10 +86,13 @@ function getChangeLog(payload) {
     const username = commit.author.username;
 
     let sha = commit.id.substring(0, 6);
-    let message =
-      commit.message.length > MAX_MESSAGE_LENGTH
-        ? commit.message.substring(0, MAX_MESSAGE_LENGTH) + "..."
-        : commit.message;
+
+    // only keep the first line, the commit message subject
+    let message = commit.message.match(/^.*$/m)[0];
+    if (message.length > MAX_SUBJECT_LENGTH) {
+      message = message.substring(0, MAX_SUBJECT_LENGTH) + "...";
+    }
+
     changelog += `- [\`${sha}\`](${commit.url}) ${message} by _@${username}_\n`;
   }
 
