@@ -37,7 +37,6 @@ jobs:
       uses: Tim203/actions-git-discord-webhook@main 
       with:
         webhook_url: ${{ secrets.YOUR_DISCORD_WEBHOOK_URL }}
-        status: ${{ job.status }}
 
 ```
 

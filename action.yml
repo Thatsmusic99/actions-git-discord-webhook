@@ -4,12 +4,14 @@ description: 'This GitHub Action sends  fancy and more meaningful discord messag
 inputs:
   webhook_url:
     description: Discord webhook URL
+    required: true
   status:
     description: Set it to job.status
+    default: ${{ job.status }}
 
 runs:
-  using: 'docker'
-  image: 'action.Dockerfile'
+  using: 'node16'
+  main: 'dist/index.js'
 
 branding:
   icon: check-circle

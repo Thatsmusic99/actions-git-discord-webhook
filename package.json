@@ -2,20 +2,20 @@
   "name": "actions-git-discord-webhook",
   "version": "1.0.0",
   "description": "This is a hard fork of actions-discord-git-webhook, with changes to the embed message.",
-  "main": "src/main.js",
+  "main": "src/app.js",
   "author": "Tim203",
   "license": "GPL-3.0",
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.0.0",
-    "child-process-promise": "^2.2.1",
-    "discord.js": "^13.0.0",
-    "xml-library": "0.2.0"
+    "discord.js": "^13.0.0"
   },
   "devDependencies": {
-    "jest": "^27.1.1",
-    "jest-when": "^3.3.1",
+    "@vercel/ncc": "^0.36.1",
     "prettier": "^2.4.0"
+  },
+  "scripts": {
+    "prepare": "ncc build src/app.js -o dist --source-map"
   },
   "standard-version": {
     "skip": {
