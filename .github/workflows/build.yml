@@ -47,5 +47,6 @@ jobs:
       - uses: actions-x/commit@v6
         if: ${{ failure() && steps.diff.conclusion == 'failure' }}
         with:
+          name: GitHub Actions[bot]
           message: Upload dist js files
           files: dist
