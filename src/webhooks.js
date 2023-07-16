@@ -29,8 +29,8 @@ module.exports.send = (
   // the avatar of the GitHub Actions user
   const avatarUrl = "https://avatars.githubusercontent.com/u/44036562";
 
-  let embed = new discord.MessageEmbed()
-    .setURL(repoUrl)
+  let embed = new discord.EmbedBuilder()
+    .setURL(runUrl)
     .setColor(color)
     .setTitle(payload.repository.full_name)
     .setDescription(
