@@ -1,6 +1,7 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
 const webhooks = require("./webhooks.js");
+const {Colors} = require("discord.js");
 
 async function run() {
   let webhookUrl = core.getInput("webhook_url");
@@ -31,11 +32,11 @@ async function run() {
 function statusColor(status) {
   switch (status) {
     case "success":
-      return "BLUE";
+      return Colors.Blue;
     case "failure":
-      return "DARK_RED";
+      return Colors.DarkRed;
     default:
-      return "GREY";
+      return Colors.Grey;
   }
 }
 
