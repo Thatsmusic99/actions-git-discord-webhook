@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "This is a hard fork of actions-discord-git-webhook, with changes to the embed message.",
   "main": "src/app.js",
-  "author": "Tim203",
+  "author": "Thatsmusic99",
   "license": "GPL-3.0",
   "dependencies": {
     "@actions/core": "^1.10.0",

@@ -12,7 +12,6 @@ module.exports.send = (
   color
 ) => {
   const commits = payload.commits;
-  const repoUrl = payload.repository.html_url;
   const compareUrl = payload.compare;
 
   if (commits.length === 0) {
@@ -24,18 +23,15 @@ module.exports.send = (
   core.debug(`Received ${commits.length} commits...`);
   core.info("Constructing Embed...");
 
-  let latest = commits[0];
-
   // the avatar of the GitHub Actions user
-  const avatarUrl = "https://avatars.githubusercontent.com/u/44036562";
+  const avatarUrl = "https://avatars.githubusercontent.com/u/9919";
 
   let embed = new discord.EmbedBuilder()
     .setURL(runUrl)
     .setColor(color)
-    .setTitle(payload.repository.full_name)
+    .setTitle(`${payload.repository.name} #${runNumber}`)
     .setDescription(
-      `**Branch:** [${branchName}](${repoUrl}/tree/${branchName})\n` +
-      `**Run:** [${runNumber}](${runUrl})\n` +
+      `**Build:** [${runNumber}](${runUrl})\n` +
       `**Status:** ${status.toLowerCase()}\n` +
       `**[Changes](${compareUrl}):**\n` +
       getChangeLog(payload)
@@ -77,7 +73,7 @@ function getChangeLog(payload) {
   let changelog = "";
 
   for (let i in commits) {
-    if (i > 5) {
+    if (i > 10) {
       changelog += `+ ${commits.length - i} more...\n`;
       break;
     }
@@ -93,7 +89,7 @@ function getChangeLog(payload) {
       message = message.substring(0, MAX_SUBJECT_LENGTH) + "...";
     }
 
-    changelog += `- [\`${sha}\`](${commit.url}) ${message} by _@${username}_\n`;
+    changelog += `- [\`${sha}\`](${commit.url}) ${message} - ${username}\n`;
   }
 
   return changelog;

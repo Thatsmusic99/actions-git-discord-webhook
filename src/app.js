@@ -31,7 +31,7 @@ async function run() {
 function statusColor(status) {
   switch (status) {
     case "success":
-      return "DARK_GREEN";
+      return "DARK_BLUE";
     case "failure":
       return "DARK_RED";
     default:
