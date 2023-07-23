@@ -22,6 +22,7 @@ module.exports.send = (
   core.debug(`Received payload: ${JSON.stringify(payload, null, 2)}`);
   core.debug(`Received ${commits.length} commits...`);
   core.info("Constructing Embed...");
+  core.info(`Color chosen: ${color}`)
 
   // the avatar of the GitHub Actions user
   const avatarUrl = "https://avatars.githubusercontent.com/u/9919";

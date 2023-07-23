@@ -91989,6 +91989,7 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(42186);
 const github = __nccwpck_require__(95438);
 const webhooks = __nccwpck_require__(76916);
+const {Colors} = __nccwpck_require__(85973);
 
 async function run() {
   let webhookUrl = core.getInput("webhook_url");
@@ -92019,11 +92020,11 @@ async function run() {
 function statusColor(status) {
   switch (status) {
     case "success":
-      return "DARK_BLUE";
+      return Colors.Blue;
     case "failure":
-      return "DARK_RED";
+      return Colors.DarkRed;
     default:
-      return "GREY";
+      return Colors.Grey;
   }
 }
 
